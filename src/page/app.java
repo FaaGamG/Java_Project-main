@@ -26,11 +26,11 @@ public class app {
     // Category
     private String currentCategory = "All";
     private java.util.List<String> categories = new ArrayList<>();
-
+ 
     public void header() {
         JPanel header = new JPanel();
         header.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 10));
-        header.setBackground(new Color(52, 73, 94));
+        header.setBackground(new Color(112,128,144));
         JButton admin = new JButton("Admin");
         JButton user = new JButton("Customer");
         addProductButton = new JButton("Add Product");
@@ -72,8 +72,9 @@ public class app {
     public void footer() {
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        footerPanel.setBackground(new Color(160, 160, 160));
-        JLabel footerLabel = new JLabel("Footer Section");
+        footerPanel.setBackground(new Color(112,128,144));
+        JLabel footerLabel = new JLabel("New Technic Shop");
+        footerLabel.setForeground(Color.WHITE);
         footerLabel.setFont(new Font("TimesRoman", Font.BOLD, 32));
         footerPanel.add(footerLabel);
         fr.add(footerPanel, BorderLayout.SOUTH);
@@ -119,6 +120,7 @@ public class app {
                 showCheckoutSummary();
             }
         });
+        
         JPanel checkoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         checkoutPanel.setOpaque(false);
         checkoutPanel.add(checkoutBtn);
@@ -278,22 +280,28 @@ public class app {
         // Microcontroller
         products.add(new Product("NodeMCU", 900, "/Image/NODE.jpg", "Microcontroller"));
         products.add(new Product("Arduino", 800, "/Image/UNO.jpg", "Microcontroller"));
-        products.add(new Product("STM32", 1200, "/Image/BUG.jpg", "Microcontroller"));
+        products.add(new Product("STM32", 1200, "/Image/STM32.jpg", "Microcontroller"));
+        products.add(new Product("Relay", 500, "/Image/relay.jpg", "Microcontroller"));
+        products.add(new Product("LCD", 1000, "/Image/LCD.jpg", "Microcontroller"));
+        products.add(new Product("Servo", 1500, "/Image/Servo.jpg", "Microcontroller"));
+        products.add(new Product("Ultrasonic", 1200, "/Image/Ultrasonic.jpg", "Microcontroller"));
+        
 
         // Electrical
-        products.add(new Product("Power Supply", 400, "/Image/BUG.jpg", "Electrical"));
-        products.add(new Product("Resistor 1K", 10, "/Image/LEAD.jpg", "Electrical"));
-        products.add(new Product("Capacitor", 15, "/Image/LEAD.jpg", "Electrical"));
+        products.add(new Product("Power Supply", 4000, "/Image/PowerSupply.jpg", "Electrical"));
+        products.add(new Product("Resistor 1K", 10, "/Image/resistor.jpg", "Electrical"));
+        products.add(new Product("Capacitor", 15, "/Image/capasistor.jpg", "Electrical"));
 
         // Connectors
         products.add(new Product("Jumper Male", 100, "/Image/JUB_P.jpg", "Connectors"));
         products.add(new Product("Jumper Female", 100, "/Image/JUM_M.jpg", "Connectors"));
-        products.add(new Product("USB Cable", 50, "/Image/LEAD.jpg", "Connectors"));
+        products.add(new Product("USB Cable", 500, "/Image/USB.jpg", "Connectors"));
 
         // Tools
         products.add(new Product("Soldering Iron", 250, "/Image/BUG.jpg", "Tools"));
-        products.add(new Product("Wire Stripper", 120, "/Image/BUG.jpg", "Tools"));
-        products.add(new Product("Multimeter", 300, "/Image/BUG.jpg", "Tools"));
+        products.add(new Product("Multimeter", 3000, "/Image/Multimeter.jpg", "Tools"));
+        products.add(new Product("Pliers", 300, "/Image/Pliers.jpg", "Tools"));
+        
     }
 
     private void refreshProductGrid() {
@@ -399,7 +407,34 @@ public class app {
         summaryTable.setRowHeight(30);
         summaryTable.getColumnModel().getColumn(0).setPreferredWidth(200);
         JScrollPane summaryScroll = new JScrollPane(summaryTable);
-        summaryDialog.add(summaryScroll, BorderLayout.CENTER);
+
+        // Customer info panel (ชื่อ, ที่อยู่, เบอร์โทร)
+
+        final JTextField nameField = new JTextField();
+        final JTextField lastNameField = new JTextField();
+        final JTextField addrField = new JTextField();
+        final JTextField phoneField = new JTextField();
+        Font font = new Font("Tahoma", Font.PLAIN, 16);
+        nameField.setFont(font);
+        lastNameField.setFont(font);
+        addrField.setFont(font);
+        phoneField.setFont(font);
+        JPanel infoPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Customer Info"));
+        infoPanel.add(new JLabel("First Name : "));
+        infoPanel.add(nameField);
+        infoPanel.add(new JLabel("Last Name : "));
+        infoPanel.add(lastNameField);
+        infoPanel.add(new JLabel("Address : "));
+        infoPanel.add(addrField);
+        infoPanel.add(new JLabel("Phone : "));
+        infoPanel.add(phoneField);
+
+        JPanel centerPanel = new JPanel(new BorderLayout(10,10));
+        centerPanel.add(summaryScroll, BorderLayout.CENTER);
+        centerPanel.add(infoPanel, BorderLayout.SOUTH);
+        summaryDialog.add(centerPanel, BorderLayout.CENTER);
 
         // Bottom panel with total and buttons
         JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
@@ -425,8 +460,17 @@ public class app {
         final double finalGrandTotal = grandTotal;
         confirmBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText().trim();
+                String lastName = lastNameField.getText().trim();
+                String addr = addrField.getText().trim();
+                String phone = phoneField.getText().trim();
+
+                if (name.isEmpty() || addr.isEmpty() || phone.isEmpty() || lastName.isEmpty() ) {
+                    JOptionPane.showMessageDialog(summaryDialog, "Please fill in all customer information.", "ข้อมูลไม่ครบ", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 JOptionPane.showMessageDialog(summaryDialog,
-                        String.format("Order confirmed!\nTotal: %.0f฿\nThank you!", finalGrandTotal),
+                        String.format("Order confirmed!\nName: %s\nLast Name: %s\nAddress: %s\nPhone: %s\nTotal: %.0f฿\nThank you!", name,lastName, addr, phone, finalGrandTotal),
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 cartItems.clear();
                 updateCartTableAndTotal();
