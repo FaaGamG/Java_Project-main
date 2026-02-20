@@ -110,8 +110,8 @@ public class app {
         totalLabelPanel.add(totalLabel);
         totalPanel.add(totalLabelPanel, BorderLayout.CENTER);
 
-        JButton checkoutBtn = new JButton("Check Bill");
-        checkoutBtn.setFont(new Font("Tahoma",Font.BOLD,18));
+        JButton checkoutBtn = new JButton(" ✓ Check Bill");
+        checkoutBtn.setFont(checkoutBtn.getFont().deriveFont(Font.BOLD, 18f));
         checkoutBtn.setBackground(new Color(40, 167, 69));
         checkoutBtn.setForeground(Color.WHITE);
 
@@ -124,6 +124,17 @@ public class app {
         JPanel checkoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         checkoutPanel.setOpaque(false);
         checkoutPanel.add(checkoutBtn);
+        JButton cancelBtn = new JButton("X Cancel Order");
+        cancelBtn.setFont(new Font("Tahoma", Font.BOLD, 18));
+        cancelBtn.setBackground(new Color(255, 0, 0));
+        cancelBtn.setForeground(Color.WHITE);
+        cancelBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cartItems.clear();
+                updateCartTableAndTotal();
+            }
+        });
+        checkoutPanel.add(cancelBtn);
         totalPanel.add(checkoutPanel, BorderLayout.SOUTH);
 
         leftPanel.add(totalPanel, BorderLayout.SOUTH);
@@ -223,19 +234,51 @@ public class app {
             bottom.add(btnAdd);
         }
 
-        // Admin can remove products
+        // Admin can remove products and Edit Product
         if (isAdmin) {
             JButton btnRemove = new JButton("Remove");
+            JButton btnEdit = new JButton("Edit");
             btnRemove.setBackground(new Color(220, 20, 60));
             btnRemove.setForeground(Color.WHITE);
             btnRemove.setFont(new Font("Tahoma", Font.PLAIN, 18));
+            btnEdit.setBackground(new Color(13, 110, 253));
+            btnEdit.setForeground(Color.WHITE);
+            btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 18));
             btnRemove.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     products.remove(p);
                     refreshProductGrid();
                 }
             });
+            btnEdit.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JTextField nameF = new JTextField(p.name);
+                    JTextField priceF = new JTextField(String.format("%.0f", p.price));
+                    JTextField imgF = new JTextField(p.imgPath);
+                    JComboBox<String> catCombo = new JComboBox<>(categories.stream().filter(c -> !c.equals("All")).toArray(String[]::new));
+                    catCombo.setSelectedItem(p.category);
+                    Object[] fields = { "Name:", nameF, "Price:", priceF, "Image path (resource):", imgF, "Category:", catCombo };
+                    int option = JOptionPane.showConfirmDialog(fr, fields, "Edit Product", JOptionPane.OK_CANCEL_OPTION);
+                    if (option == JOptionPane.OK_OPTION) {
+                        try {
+                            String n = nameF.getText().trim();
+                            double pr = Double.parseDouble(priceF.getText().trim());
+                            String img = imgF.getText().trim();
+                            if (!img.startsWith("/")) img = "/" + img;
+                            String cat = (String) catCombo.getSelectedItem();
+                            p.name = n;
+                            p.price = pr;
+                            p.imgPath = img;
+                            p.category = cat;
+                            refreshProductGrid();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(fr, "Invalid input: " + ex.getMessage());
+                        }
+                    }
+                }
+            });
             bottom.add(btnRemove);
+            bottom.add(btnEdit);
         }
 
         card.add(bottom, BorderLayout.SOUTH);
@@ -477,23 +520,7 @@ public class app {
                 summaryDialog.dispose();
             }
         });
-
-        // ปิด dialog
-        JButton cancelBtn = new JButton("X Cancel Order");
-        cancelBtn.setFont(confirmBtn.getFont().deriveFont(Font.BOLD, 18f));
-        cancelBtn.setBackground(new Color(255, 0, 0));
-        cancelBtn.setForeground(Color.WHITE);
-        cancelBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // clear the current order and update the cart view
-                cartItems.clear();
-                updateCartTableAndTotal();
-                summaryDialog.dispose();
-            }
-        });
-
         buttonPanel.add(confirmBtn);
-        buttonPanel.add(cancelBtn);
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         summaryDialog.add(bottomPanel, BorderLayout.SOUTH);
