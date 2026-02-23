@@ -26,11 +26,11 @@ public class app {
     // Category
     private String currentCategory = "All";
     private java.util.List<String> categories = new ArrayList<>();
- 
+
     public void header() {
         JPanel header = new JPanel();
         header.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 10));
-        header.setBackground(new Color(112,128,144));
+        header.setBackground(new Color(112, 128, 144));
         JButton admin = new JButton("Admin");
         JButton user = new JButton("Customer");
         addProductButton = new JButton("Add Product");
@@ -72,7 +72,7 @@ public class app {
     public void footer() {
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        footerPanel.setBackground(new Color(112,128,144));
+        footerPanel.setBackground(new Color(112, 128, 144));
         JLabel footerLabel = new JLabel("New Technic Shop");
         footerLabel.setForeground(Color.WHITE);
         footerLabel.setFont(new Font("TimesRoman", Font.BOLD, 32));
@@ -110,7 +110,7 @@ public class app {
         totalLabelPanel.add(totalLabel);
         totalPanel.add(totalLabelPanel, BorderLayout.CENTER);
 
-        JButton checkoutBtn = new JButton(" ✓ Check Bill");
+        JButton checkoutBtn = new JButton("📄 Check Bill");
         checkoutBtn.setFont(checkoutBtn.getFont().deriveFont(Font.BOLD, 18f));
         checkoutBtn.setBackground(new Color(40, 167, 69));
         checkoutBtn.setForeground(Color.WHITE);
@@ -120,12 +120,12 @@ public class app {
                 showCheckoutSummary();
             }
         });
-        
+
         JPanel checkoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         checkoutPanel.setOpaque(false);
         checkoutPanel.add(checkoutBtn);
-        JButton cancelBtn = new JButton("X Cancel Order");
-        cancelBtn.setFont(new Font("Tahoma", Font.BOLD, 18));
+        JButton cancelBtn = new JButton("🚫 Clear Order");
+        cancelBtn.setFont(checkoutBtn.getFont().deriveFont(Font.BOLD, 18f));
         cancelBtn.setBackground(new Color(255, 0, 0));
         cancelBtn.setForeground(Color.WHITE);
         cancelBtn.addActionListener(new ActionListener() {
@@ -236,14 +236,14 @@ public class app {
 
         // Admin can remove products and Edit Product
         if (isAdmin) {
-            JButton btnRemove = new JButton("Remove");
-            JButton btnEdit = new JButton("Edit");
+            JButton btnRemove = new JButton("🗑️ Remove");
+            btnRemove.setFont(btnRemove.getFont().deriveFont(Font.BOLD, 18f));
             btnRemove.setBackground(new Color(220, 20, 60));
             btnRemove.setForeground(Color.WHITE);
-            btnRemove.setFont(new Font("Tahoma", Font.PLAIN, 18));
+            JButton btnEdit = new JButton("🖋️ Edit");
             btnEdit.setBackground(new Color(13, 110, 253));
             btnEdit.setForeground(Color.WHITE);
-            btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 18));
+            btnEdit.setFont(btnEdit.getFont().deriveFont(Font.BOLD, 18f));
             btnRemove.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     products.remove(p);
@@ -255,16 +255,20 @@ public class app {
                     JTextField nameF = new JTextField(p.name);
                     JTextField priceF = new JTextField(String.format("%.0f", p.price));
                     JTextField imgF = new JTextField(p.imgPath);
-                    JComboBox<String> catCombo = new JComboBox<>(categories.stream().filter(c -> !c.equals("All")).toArray(String[]::new));
+                    JComboBox<String> catCombo = new JComboBox<>(
+                            categories.stream().filter(c -> !c.equals("All")).toArray(String[]::new));
                     catCombo.setSelectedItem(p.category);
-                    Object[] fields = { "Name:", nameF, "Price:", priceF, "Image path (resource):", imgF, "Category:", catCombo };
-                    int option = JOptionPane.showConfirmDialog(fr, fields, "Edit Product", JOptionPane.OK_CANCEL_OPTION);
+                    Object[] fields = { "Name:", nameF, "Price:", priceF, "Image path (resource):", imgF, "Category:",
+                            catCombo };
+                    int option = JOptionPane.showConfirmDialog(fr, fields, "Edit Product",
+                            JOptionPane.OK_CANCEL_OPTION);
                     if (option == JOptionPane.OK_OPTION) {
                         try {
                             String n = nameF.getText().trim();
                             double pr = Double.parseDouble(priceF.getText().trim());
                             String img = imgF.getText().trim();
-                            if (!img.startsWith("/")) img = "/" + img;
+                            if (!img.startsWith("/"))
+                                img = "/" + img;
                             String cat = (String) catCombo.getSelectedItem();
                             p.name = n;
                             p.price = pr;
@@ -328,7 +332,6 @@ public class app {
         products.add(new Product("LCD", 1000, "/Image/LCD.jpg", "Microcontroller"));
         products.add(new Product("Servo", 1500, "/Image/Servo.jpg", "Microcontroller"));
         products.add(new Product("Ultrasonic", 1200, "/Image/Ultrasonic.jpg", "Microcontroller"));
-        
 
         // Electrical
         products.add(new Product("Power Supply", 4000, "/Image/PowerSupply.jpg", "Electrical"));
@@ -344,7 +347,7 @@ public class app {
         products.add(new Product("Soldering Iron", 250, "/Image/BUG.jpg", "Tools"));
         products.add(new Product("Multimeter", 3000, "/Image/Multimeter.jpg", "Tools"));
         products.add(new Product("Pliers", 300, "/Image/Pliers.jpg", "Tools"));
-        
+
     }
 
     private void refreshProductGrid() {
@@ -474,7 +477,7 @@ public class app {
         infoPanel.add(new JLabel("Phone : "));
         infoPanel.add(phoneField);
 
-        JPanel centerPanel = new JPanel(new BorderLayout(10,10));
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
         centerPanel.add(summaryScroll, BorderLayout.CENTER);
         centerPanel.add(infoPanel, BorderLayout.SOUTH);
         summaryDialog.add(centerPanel, BorderLayout.CENTER);
@@ -508,12 +511,15 @@ public class app {
                 String addr = addrField.getText().trim();
                 String phone = phoneField.getText().trim();
 
-                if (name.isEmpty() || addr.isEmpty() || phone.isEmpty() || lastName.isEmpty() ) {
-                    JOptionPane.showMessageDialog(summaryDialog, "Please fill in all customer information.", "ข้อมูลไม่ครบ", JOptionPane.WARNING_MESSAGE);
+                if (name.isEmpty() || addr.isEmpty() || phone.isEmpty() || lastName.isEmpty()) {
+                    JOptionPane.showMessageDialog(summaryDialog, "Please fill in all customer information.",
+                            "ข้อมูลไม่ครบ", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 JOptionPane.showMessageDialog(summaryDialog,
-                        String.format("Order confirmed!\nName: %s\nLast Name: %s\nAddress: %s\nPhone: %s\nTotal: %.0f฿\nThank you!", name,lastName, addr, phone, finalGrandTotal),
+                        String.format(
+                                "Order confirmed!\nName: %s\nLast Name: %s\nAddress: %s\nPhone: %s\nTotal: %.0f฿\nThank you!",
+                                name, lastName, addr, phone, finalGrandTotal),
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 cartItems.clear();
                 updateCartTableAndTotal();
