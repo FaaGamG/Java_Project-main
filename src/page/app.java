@@ -474,7 +474,7 @@ public class app {
         infoPanel.add(lastNameField);
         infoPanel.add(new JLabel("Address : "));
         infoPanel.add(addrField);
-        infoPanel.add(new JLabel("Phone : "));
+        infoPanel.add(new JLabel("Tele Phone Number : "));
         infoPanel.add(phoneField);
 
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
